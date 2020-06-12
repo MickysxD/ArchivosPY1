@@ -39,46 +39,6 @@ int leer_mkdisk(MKDISK *mk, string path){
     }
 }
 
-void verDiscos(string path){
-    FILE *disco = fopen(path.c_str(), "rb");
-    MKDISK mk;
-    fseek(disco, 0, SEEK_SET);
-    fread(&mk, sizeof(MKDISK), 1, disco);
-    fclose(disco);
-
-    for(int i=0; i<4; i++){
-        qDebug()<< mk.pos_part[i].name;
-        qDebug()<< mk.pos_part[i].estado;
-        qDebug()<< mk.pos_part[i].size;
-        qDebug()<< mk.pos_part[i].size_total;
-        qDebug()<< mk.pos_part[i].fit+"\n";
-    }
-}
-
-void verLogicas(string path){
-    FILE *disco = fopen(path.c_str(), "rb");
-    FDISK lg;
-    fseek(disco, sizeof(MKDISK), SEEK_SET);
-    fread(&lg, sizeof(FDISK), 1, disco);
-
-    while(true){
-        qDebug()<< lg.name;
-        qDebug()<< lg.estado;
-        qDebug()<< lg.size;
-        qDebug()<< lg.size_total;
-        qDebug()<< lg.start;
-        qDebug()<< lg.next;
-        qDebug()<< lg.fit+"\n";
-        if(lg.next == -1){
-            break;
-        }
-        fseek(disco, lg.next, SEEK_SET);
-        fread(&lg, sizeof(FDISK), 1, disco);
-    }
-
-    fclose(disco);
-}
-
 void vermount(){
     for(int i=0; i<lmount.size(); i++){
         qDebug()<< lmount[i].name.c_str();
@@ -223,11 +183,11 @@ int desactivar_logicas(string path){
         fseek(disco, sizeof(MKDISK), SEEK_SET);
         fread(&fs, sizeof(FDISK), 1, disco);
         FDISK n = FDISK(0, ' ', ' ', "", 0, 0);
+        n.estado = 0;
 
         while(fs.estado != 0){
             n.start = fs.start;
             escribir_logica(path, n);
-
             fseek(disco, fs.next, SEEK_SET);
             fread(&fs, sizeof(FDISK), 1, disco);
         }
@@ -245,7 +205,6 @@ int buscar_ext(MKDISK mk){
     }
     return -1;
 }
-
 
 void desactivar_l(string path, string name){
     FILE *disco = fopen(path.c_str(), "rb");
@@ -269,7 +228,8 @@ void desactivar_l(string path, string name){
             escribir_mkdisk(mk, path);
 
             break;
-        }else if(lg.next == -1){
+        }
+        if(lg.next == -1 || lg.estado == 0){
             break;
         }
         fseek(disco, lg.next, SEEK_SET);
@@ -289,7 +249,7 @@ int exist_nombre(string path, string name){
 
     for(int i=0; i<4; i++){
         string n = mk.pos_part[i].name;
-        if(n == name){
+        if(n == name && mk.pos_part[i].estado == 1){
             return i;
         }
     }
@@ -299,8 +259,11 @@ int exist_nombre(string path, string name){
 
     while(true){
         string n = lg.name;
-        if(n == name){
+        if(n == name && lg.estado == 1){
             return lg.start;
+        }
+        if(lg.estado == 0 || lg.next == -1){
+            break;
         }
         fseek(disco, lg.next, SEEK_SET);
         fread(&lg, sizeof(FDISK), 1, disco);
@@ -600,12 +563,10 @@ void comando_fdisk(NodoAST nodo){
             }else{
                 unit = utemp[0];
             }
-
         }else if(temp.tipo == "PATH"){
             temp.valor = temp.valor.replace("\"","");
             temp.valor = temp.valor.replace("/home","/home/micky");
             path = temp.valor.toStdString();
-
         }else if(temp.tipo == "TYPE"){
             string ttemp = temp.valor.toUpper().toStdString();
             if(ttemp != "P" && ttemp != "E" && ttemp != "L"){
@@ -613,28 +574,23 @@ void comando_fdisk(NodoAST nodo){
             }else{
                 type = ttemp[0];
             }
-
         }else if(temp.tipo == "DELETE"){
             string dtemp = temp.valor.toUpper().toStdString();
             if(dtemp != "FAST" && dtemp != "FULL"){
                 dtemp = "";
             }
-
             for(int i=0; i<16; i++){
                 del[i] = dtemp[i];
 
             }
-
         }else if(temp.tipo == "NAME"){
             temp.valor = temp.valor.replace("\"","");
             string ntemp = temp.valor.toStdString();
             for(int i=0; i<16; i++){
                 name[i] = ntemp[i];
             }
-
         }else if(temp.tipo == "ADD"){
-            size = temp.valor.toInt();
-
+            add = temp.valor.toInt();
         }
 
     }
@@ -645,6 +601,7 @@ void comando_fdisk(NodoAST nodo){
 
             if(strncmp(name, "", 16) != 0 && add != 0 && unit != ' '){
                 //add
+                add = real_size(add, unit);
                 int p = exist_nombre(path, name);
                 if(p == -1){
                     qDebug()<<"No existe particion (E,P,L), comando FDISK";
@@ -652,10 +609,11 @@ void comando_fdisk(NodoAST nodo){
                     FDISK lg = leer_logica(p, path);
 
                     if(add > 0){
-                        if(lg.size_disp >= add){
+                        if(lg.size_total-lg.size >= add){
                             lg.size += add;
-                            lg.size_disp -= add;
+                            lg.size_disp += add;
                             escribir_logica(path, lg);
+                            qDebug()<<"Espasio agregado, comando FDISK";
                         }else{
                             qDebug()<<"No existe espasio suficiente para agregar, comando FDISK";
                         }
@@ -663,8 +621,9 @@ void comando_fdisk(NodoAST nodo){
                     }else{
                         if(lg.size+add >= 0){
                             lg.size += add;
-                            lg.size_disp -= add;
+                            lg.size_disp += add;
                             escribir_logica(path, lg);
+                            qDebug()<<"Espasio agregado, comando FDISK";
                         }else{
                             qDebug()<<"No existe espasio suficiente para quitar, comando FDISK";
                         }
@@ -674,15 +633,20 @@ void comando_fdisk(NodoAST nodo){
                     if(add > 0){
                         if(mk.pos_part[p].size_total-mk.pos_part[p].size >= add){
                             mk.pos_part[p].size += add;
-                            mk.pos_part[p].size_disp -= add;
+                            mk.pos_part[p].size_disp += add;
+                            mk.size_disp -= add;
+                            escribir_mkdisk(mk,path);
+                            qDebug()<<"Espasio agregado, comando FDISK";
                         }else{
                             qDebug()<<"No existe espasio suficiente para agregar, comando FDISK";
                         }
-
                     }else{
-                        if(mk.pos_part[p].size_total-mk.pos_part[p].size+add >= 0){
+                        if(mk.pos_part[p].size+add >= 0 && mk.pos_part[p].size_disp+add>=0){
                             mk.pos_part[p].size += add;
-                            mk.pos_part[p].size_disp -= add;
+                            mk.pos_part[p].size_disp += add;
+                            mk.size_disp -= add;
+                            escribir_mkdisk(mk,path);
+                            qDebug()<<"Espacio quitado, comando FDISK";
                         }else{
                             qDebug()<<"No existe espasio suficiente para quitar, comando FDISK";
                         }
@@ -725,7 +689,7 @@ void comando_fdisk(NodoAST nodo){
                     if(tm > mk.size_disp){
                         qDebug()<<"No hay espacio suficiente para la particion, comando FDISK";
                     }else if(exist_nombre(path, name) != -1){
-                        qDebug()<<"Existe particion con el mismo nombre, comando FDISK";
+                        qDebug()<<"Existe particion o logica con el mismo nombre, comando FDISK";
                     }else if(mk.num_part == 4){
                         qDebug()<<"Ya existen 4 particiones, comando FDISK";
                     }else if(type == 'E' && mk.ext == 1){
@@ -761,19 +725,18 @@ void comando_fdisk(NodoAST nodo){
                             }
                         }
                     }
-                    verDiscos(path);
 
                 }else if(type == 'L'){
                     //particiones logicas
                     if(mk.ext == 0){
                         qDebug()<<"No existe particion extendida para una Logica, comando FDISK";
+                    }else if(exist_nombre(path, name) != -1){
+                        qDebug()<<"Existe particion o logica con el mismo nombre, comando FDISK";
                     }else{
                         int ext = buscar_ext(mk);
                         FDISK fd = mk.pos_part[ext];
                         if(fd.size_disp < tm){
                             qDebug()<<"No hay espacio suficiente para la logica, comando FDISK";
-                        }else if(exist_logicas(path, name) == -1){
-                            qDebug()<<"Existe logica con el mismo nombre, comando FDISK";
                         }else{
                             int lp = pos_logica(fd, path, fit, tm);
                             if(lp != -1){
@@ -791,7 +754,6 @@ void comando_fdisk(NodoAST nodo){
                                    nuevo.next = -1;
                                 }else{
                                     nuevo.size_total = log.size_total;
-                                    nuevo.size_disp = nuevo.size_total-nuevo.size;
                                 }
 
                                 escribir_logica(path, nuevo);
@@ -808,7 +770,6 @@ void comando_fdisk(NodoAST nodo){
                         }
 
                     }
-                    verLogicas(path);
                 }else{
                     qDebug()<<"ERROR desconocido, comando FDISK";
                 }
@@ -848,7 +809,8 @@ int comando_mount(NodoAST nodo){
     if(path != "" && name != ""){
         MKDISK mk;
         if(leer_mkdisk(&mk, path) == 1){
-            if(exist_nombre(path, name) == -1){
+            int e = exist_nombre(path, name);
+            if(e == -1){
                 qDebug()<<"No existe particion con ese nombre, comando MOUNT";
             }else{
                 string nombre = "";
@@ -883,7 +845,7 @@ int comando_mount(NodoAST nodo){
                     qDebug()<<"Mount con exito, comando MOUNT";
                 }
 
-                vermount();
+                //vermount();
             }
         }else{
             qDebug()<<"Path no existe, comando MOUNT";
@@ -922,7 +884,7 @@ int comando_unmount(NodoAST nodo){
             qDebug()<<"Unmount con exito, comando UNMOUNT";
         }
 
-        vermount();
+        //vermount();
 
     }else{
         qDebug()<<"Falta parametro name, comando UNMOUNT";
@@ -947,7 +909,9 @@ int comando_rep(NodoAST nodo){
             }
         }else if(temp.tipo == "PATH"){
             temp.valor = temp.valor.replace("\"","");
+            //temp.valor = temp.valor.replace("","");
             temp.valor = temp.valor.replace("/home","/home/micky");
+            carpeta(temp.valor);
             path = temp.valor.toStdString();
         }
     }
@@ -970,17 +934,253 @@ int comando_rep(NodoAST nodo){
                 qDebug()<<"Error con el path, comando REP";
             }else{
                 if(name == "MBR"){
+                    ofstream archivo;
+                    archivo.open(path+".dot",ios::out);
+
+                    archivo<<"digraph{\ngraph[pad=0.5, nodesep=0.5, ranksep=2];\n";
+                    archivo<<"mbr[shape=plain label=<<table border=\"3\" cellborder=\"1\">\n";
+                    archivo<<"  <tr><td><i>MBR "<<mk.name<<"</i></td><td><i> </i></td></tr>\n";
+
+                    archivo<<"  <tr><td><i>Nombre</i></td><td><i>Valor</i></td></tr>\n";
+                    archivo<<"  <tr><td><i> mbr_tamano </i></td><td><i>"<<mk.size<<"</i></td></tr>\n";
+                    archivo<<"  <tr><td><i> mbr_fecha_creacion </i></td><td><i>"<<mk.time<<"</i></td></tr>\n";
+                    archivo<<"  <tr><td><i> mbr_disk_signature </i></td><td><i>"<<mk.random<<"</i></td></tr>\n";
+                    archivo<<"  <tr><td><i> disk_fit </i></td><td><i>"<<mk.fit<<"</i></td></tr>\n";
+                    //archivo<<"  <tr><td><i>---</i></td><td><i>---</i></td></tr>\n";
+
+                    int x=1;
+                    for(int i=0; i<4; i++){
+                        FDISK fd = mk.pos_part[i];
+                        if(fd.estado != 0){
+                            archivo<<"  <tr><td><i>PART "<<x<<"</i></td><td><i> </i></td></tr>\n";
+                            archivo<<"  <tr><td><i>part_status_"<<x<<" </i></td><td><i>"<<fd.estado<<"</i></td></tr>\n";
+                            archivo<<"  <tr><td><i>part_type_"<<x<<" </i></td><td><i>"<<fd.type<<"</i></td></tr>\n";
+                            archivo<<"  <tr><td><i>part_fit_"<<x<<" </i></td><td><i>"<<fd.fit<<"</i></td></tr>\n";
+                            archivo<<"  <tr><td><i>part_start_"<<x<<" </i></td><td><i>"<<fd.start<<"</i></td></tr>\n";
+                            archivo<<"  <tr><td><i>part_size_"<<x<<" </i></td><td><i>"<<fd.size_total<<"</i></td></tr>\n";
+                            archivo<<"  <tr><td><i>part_name_"<<x<<"</i></td><td><i>"<<fd.name<<"</i></td></tr>\n";
+                            x++;
+                        }
+                    }
+
+                    //archivo<<"  <tr><td><i>---</i></td><td><i>---</i></td></tr>\n";
+
+                    if(mk.ext == 1){
+                        FDISK lg = leer_logica(sizeof(MKDISK), mt.path);
+                        FDISK ex = mk.pos_part[buscar_ext(mk)];
+                        int pos = ex.start+sizeof(FDISK);
+                        int x=1;
+                        while(lg.estado != 0){
+                            archivo<<"  <tr><td><i>EBR "<<x<<"</i></td><td><i> </i></td></tr>\n";
+                            archivo<<"  <tr><td><i>part_status_"<<x<<" </i></td><td><i>"<<lg.estado<<"</i></td></tr>\n";
+                            archivo<<"  <tr><td><i>part_fit_"<<x<<" </i></td><td><i>"<<lg.fit<<"</i></td></tr>\n";
+                            archivo<<"  <tr><td><i>part_start_"<<x<<" </i></td><td><i>"<<pos<<"</i></td></tr>\n";
+                            archivo<<"  <tr><td><i>part_size_"<<x<<" </i></td><td><i>"<<lg.size_total<<"</i></td></tr>\n";
+                            if(lg.next == -1){
+                                archivo<<"  <tr><td><i>part_next_"<<x<<" </i></td><td><i>"<<lg.next<<"</i></td></tr>\n";
+                                archivo<<"  <tr><td><i>part_name_"<<x<<"</i></td><td><i>"<<lg.name<<"</i></td></tr>\n";
+                                break;
+                            }else{
+                                pos += lg.size_total;
+                                archivo<<"  <tr><td><i>part_next_"<<x<<" </i></td><td><i>"<<pos<<"</i></td></tr>\n";
+                            }
+                            archivo<<"  <tr><td><i>part_name_"<<x<<"</i></td><td><i>"<<lg.name<<"</i></td></tr>\n";
+                            x++;
+                            lg = leer_logica(lg.next, mt.path);
+                        }
+                    }
+
+                    archivo<<" </table>>];\n}\n";
+
+                    archivo.close();
+
+                    string gen="dot -Tpng "+path+".dot -o "+path+".png";
+
+                    system(gen.c_str());
 
                 }else{
+
+                    ofstream archivo;
+                    archivo.open(path+".dot",ios::out);
+
+                    archivo<<"digraph{\nnode [fontname=\"Arial\"];\n";
+                    archivo<<"disk[shape=record\n";
+                    archivo<<"label=\"MBR";
+                    double librem = 0;
+
+                    for(int i=0; i<4; i++){
+                        FDISK fd = mk.pos_part[i];
+                        if(fd.estado != 0){
+                            if(fd.estado == -1){
+                                double a = fd.size_total;
+                                double b = mk.size;
+                                librem += fd.size_total;
+                                double s = (a/b)*100;
+                                archivo<<"|LIBRE\\n"<<s<<"%";
+
+                            }else{
+                                if(fd.type == 'P'){
+                                    double a = fd.size;
+                                    double b = mk.size;
+                                    double s = (a/b)*100;
+                                    archivo<<"|PRIMARIA\\n"<<s<<"%";
+                                    s = fd.size_total-fd.size;
+                                    if(s > 0){
+                                        librem += s;
+                                        double c = mk.size;
+                                        s = (s/c)*100;
+                                        archivo<<"|LIBRE\\n"<<s<<"%";
+                                    }
+                                }else{
+                                    //particion ext
+
+                                    archivo<<"|{EXTENDIDA|{";
+                                    FDISK lg = leer_logica(sizeof(MKDISK), mt.path);
+                                    double libred = fd.size_disp;
+
+                                    while(lg.estado != 0){
+                                        if(lg.estado == -1){
+                                            double a = lg.size_total;
+                                            double b = mk.size;
+                                            double s = (a/b)*100;
+                                            archivo<<"|LIBRE\\n"<<s<<"%";
+                                            libred -= lg.size_total;
+
+                                        }else{
+                                            double a = lg.size;
+                                            double b = mk.size;
+                                            double t = (a/b)*100;
+                                            archivo<<"|EBR|LOGICA\\n"<<t<<"%";
+
+                                            if(lg.size_total-lg.size > 0){
+                                                double a = lg.size_total-lg.size;
+                                                double b = mk.size;
+                                                t = (a/b)*100;
+                                                archivo<<"|LIBRE\\n"<<t<<"%";
+                                                libred -= a;
+                                            }
+                                        }
+
+                                        if(lg.next == -1){
+                                            break;
+                                        }
+                                        lg = leer_logica(lg.next, mt.path);
+                                    }
+
+                                    if(libred > 0){
+                                        double b = mk.size;
+                                        libred = (libred/b)*100;
+                                        archivo<<"|LIBRE\\n"<<libred<<"%";
+                                    }
+
+                                    archivo<<"}}";
+
+                                    if(fd.size_total-fd.size > 0){
+                                        double a = fd.size_total-fd.size ;
+                                        double b = mk.size;
+                                        double s = (a/b)*100;
+                                        archivo<<"|LIBRE\\n"<<s<<"%";
+                                    }
+
+                                    librem += fd.size_total-fd.size;
+
+                                }
+
+                                //|{EXTENDIDA|{EBR|LOGICA\\n20%|EBR|LIBRE\n20%}}|
+                            }
+
+                        }
+                    }
+
+                    if(mk.size_disp-librem > 0){
+                        double b = mk.size;
+                        double a = mk.size_disp-librem;
+                        double i = (a/b)*100;
+                        archivo<<"|LIBRE\\n"<<i<<"%";
+                    }
+
+                    archivo<<"\"];\n}";
+
+                    archivo.close();
+
+                    string gen="dot -Tpng "+path+".dot -o "+path+".png";
+
+                    system(gen.c_str());
 
                 }
             }
         }
 
-        vermount();
+        //vermount();
 
     }
 
+}
+
+int p(){
+    FILE *disco = fopen("/home/micky/archivos/fase1/Disco1.disk", "rb");
+    MKDISK mk;
+    FDISK fd;
+    if(disco != NULL){
+        fseek(disco, 0, SEEK_SET);
+        fread(&mk, sizeof(MKDISK), 1, disco);
+
+        qDebug()<<"MKDISK";
+        qDebug()<<mk.name;
+        qDebug()<<mk.size;
+        qDebug()<<mk.size_disp;
+        qDebug()<<mk.time;
+        qDebug()<<"";
+
+        qDebug()<<"PARTICIONES";
+        for(int i=0; i<4; i++){
+            if(mk.pos_part[i].estado != 0){
+                fd = mk.pos_part[i];
+                qDebug()<<fd.estado;
+                qDebug()<<fd.name;
+                qDebug()<<fd.size_total;
+                qDebug()<<fd.size;
+                qDebug()<<fd.size_disp;
+                qDebug()<<fd.type;
+                qDebug()<<"";
+            }
+        }
+
+        fseek(disco, sizeof(MKDISK), SEEK_SET);
+        fread(&fd, sizeof(FDISK), 1, disco);
+
+        qDebug()<<"LOGICAS";
+        if(fd.estado != 0){
+            qDebug()<<fd.estado;
+            qDebug()<<fd.name;
+            qDebug()<<fd.next;
+            qDebug()<<fd.size_total;
+            qDebug()<<fd.size;
+            qDebug()<<fd.size_disp;
+            qDebug()<<fd.type;
+            qDebug()<<"";
+
+            while(fd.next != -1){
+                fseek(disco, fd.next, SEEK_SET);
+                fread(&fd, sizeof(FDISK), 1, disco);
+
+                qDebug()<<fd.estado;
+                qDebug()<<fd.name;
+                qDebug()<<fd.next;
+                qDebug()<<fd.size_total;
+                qDebug()<<fd.size;
+                qDebug()<<fd.size_disp;
+                qDebug()<<fd.type;
+                qDebug()<<"";
+            }
+        }
+
+        fclose(disco);
+
+    }else{
+        qDebug()<<"error ver";
+
+    }
 }
 
 int ejecutar_exec(){
@@ -1003,7 +1203,7 @@ int ejecutar_exec(){
             comando_unmount(temp);
 
         }else if(temp.valor == "REP"){
-
+            comando_rep(temp);
 
         }else if(temp.tipo == "COMENTARIO"){
             temp.valor = temp.valor.replace("#","");
@@ -1044,12 +1244,14 @@ int comando_exec(NodoAST nodo){
                 if(dato != ""){
                     yy_scan_string(dato.toUtf8().constData());
                     if(yyparse() == 0){
-                        qDebug()<<"LINEA-"+i;
+                        qDebug()<<"-------------------------------------------------------------------------";
+                        qDebug()<<"LINEA-"<<i;
                         qDebug()<<"-------------------------------------------------------------------------";
                         ejecutar_exec();
                         qDebug()<<"-------------------------------------------------------------------------";
                     }
                 }
+                i++;
             }
             archivo.close();
 
@@ -1095,55 +1297,13 @@ int ejecutar(){
 
 }
 
-int p(){
-    FILE *disco = fopen("/home/micky/archivos/fase1/Disco1.disk", "rb");
-    MKDISK mk;
-    FDISK fd;
-    if(disco != NULL){
-        fseek(disco, 0, SEEK_SET);
-        fread(&mk, sizeof(MKDISK), 1, disco);
-
-        qDebug()<<mk.name;
-        qDebug()<<mk.size;
-        qDebug()<<mk.time;
-        qDebug()<<"";
-
-        fseek(disco, sizeof(MOUNT), SEEK_SET);
-        fread(&fd, sizeof(FDISK), 1, disco);
-
-        qDebug()<<fd.estado;
-        qDebug()<<fd.name;
-        qDebug()<<fd.next;
-        qDebug()<<fd.size_total;
-        qDebug()<<fd.size;
-        qDebug()<<fd.size_disp;
-
-        fseek(disco, sizeof(MOUNT)+sizeof(FDISK), SEEK_SET);
-        fread(&fd, sizeof(FDISK), 1, disco);
-
-        fclose(disco);
-
-        qDebug()<<fd.estado;
-        qDebug()<<fd.name;
-        qDebug()<<fd.next;
-        qDebug()<<fd.size_total;
-        qDebug()<<fd.size;
-        qDebug()<<fd.size_disp;
-
-    }else{
-        qDebug()<<"error dir";
-
-    }
-}
-
 int main()
 {
-    qDebug()<<"<-------------------------------------------------->";
     qDebug()<<"     Comando --> ";
     QString dato="";
+    //desactivar_logicas("/home/micky/archivos/fase1/Disco1.disk");
     //p();
-    //qDebug()<<sizeof(MKDISK);
-    //qDebug()<<sizeof(FDISK);
+
     while(dato == ""){
         QTextStream qtin(stdin);
         dato = qtin.readLine();
@@ -1157,7 +1317,6 @@ int main()
         }
 
     }
-    qDebug()<<"<-------------------------------------------------->";
     main();
     return 1;
 }

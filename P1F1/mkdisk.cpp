@@ -17,7 +17,7 @@ MKDISK::MKDISK(int size, char fit, char unit, char name[16], char time[16], int 
     }
 
     this->random = random;
-    this->size_disp = size-sizeof(MKDISK);
+    this->size_disp = size;
     this->ext = 0;
     this->num_part = 0;
 
