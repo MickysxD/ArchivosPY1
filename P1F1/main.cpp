@@ -634,6 +634,7 @@ void comando_fdisk(NodoAST nodo){
                         if(mk.pos_part[p].size_total-mk.pos_part[p].size >= add){
                             mk.pos_part[p].size += add;
                             mk.pos_part[p].size_disp += add;
+                            mk.size_disp -= add;
                             escribir_mkdisk(mk,path);
                             qDebug()<<"Espasio agregado, comando FDISK";
                         }else{
@@ -643,6 +644,7 @@ void comando_fdisk(NodoAST nodo){
                         if(mk.pos_part[p].size+add >= 0 && mk.pos_part[p].size_disp+add>=0){
                             mk.pos_part[p].size += add;
                             mk.pos_part[p].size_disp += add;
+                            mk.size_disp -= add;
                             escribir_mkdisk(mk,path);
                             qDebug()<<"Espacio quitado, comando FDISK";
                         }else{
@@ -808,7 +810,7 @@ int comando_mount(NodoAST nodo){
         MKDISK mk;
         if(leer_mkdisk(&mk, path) == 1){
             int e = exist_nombre(path, name);
-            if(e == -1 || e > 3){
+            if(e == -1){
                 qDebug()<<"No existe particion con ese nombre, comando MOUNT";
             }else{
                 string nombre = "";
@@ -843,7 +845,7 @@ int comando_mount(NodoAST nodo){
                     qDebug()<<"Mount con exito, comando MOUNT";
                 }
 
-                vermount();
+                //vermount();
             }
         }else{
             qDebug()<<"Path no existe, comando MOUNT";
@@ -882,7 +884,7 @@ int comando_unmount(NodoAST nodo){
             qDebug()<<"Unmount con exito, comando UNMOUNT";
         }
 
-        vermount();
+        //vermount();
 
     }else{
         qDebug()<<"Falta parametro name, comando UNMOUNT";
@@ -907,7 +909,9 @@ int comando_rep(NodoAST nodo){
             }
         }else if(temp.tipo == "PATH"){
             temp.valor = temp.valor.replace("\"","");
+            //temp.valor = temp.valor.replace("","");
             temp.valor = temp.valor.replace("/home","/home/micky");
+            carpeta(temp.valor);
             path = temp.valor.toStdString();
         }
     }
@@ -933,15 +937,181 @@ int comando_rep(NodoAST nodo){
                     ofstream archivo;
                     archivo.open(path+".dot",ios::out);
 
+                    archivo<<"digraph{\ngraph[pad=0.5, nodesep=0.5, ranksep=2];\n";
+                    archivo<<"mbr[shape=plain label=<<table border=\"3\" cellborder=\"1\">\n";
+                    archivo<<"  <tr><td><i>MBR "<<mk.name<<"</i></td><td><i> </i></td></tr>\n";
 
+                    archivo<<"  <tr><td><i>Nombre</i></td><td><i>Valor</i></td></tr>\n";
+                    archivo<<"  <tr><td><i> mbr_tamano </i></td><td><i>"<<mk.size<<"</i></td></tr>\n";
+                    archivo<<"  <tr><td><i> mbr_fecha_creacion </i></td><td><i>"<<mk.time<<"</i></td></tr>\n";
+                    archivo<<"  <tr><td><i> mbr_disk_signature </i></td><td><i>"<<mk.random<<"</i></td></tr>\n";
+                    archivo<<"  <tr><td><i> disk_fit </i></td><td><i>"<<mk.fit<<"</i></td></tr>\n";
+                    //archivo<<"  <tr><td><i>---</i></td><td><i>---</i></td></tr>\n";
+
+                    int x=1;
+                    for(int i=0; i<4; i++){
+                        FDISK fd = mk.pos_part[i];
+                        if(fd.estado != 0){
+                            archivo<<"  <tr><td><i>PART "<<x<<"</i></td><td><i> </i></td></tr>\n";
+                            archivo<<"  <tr><td><i>part_status_"<<x<<" </i></td><td><i>"<<fd.estado<<"</i></td></tr>\n";
+                            archivo<<"  <tr><td><i>part_type_"<<x<<" </i></td><td><i>"<<fd.type<<"</i></td></tr>\n";
+                            archivo<<"  <tr><td><i>part_fit_"<<x<<" </i></td><td><i>"<<fd.fit<<"</i></td></tr>\n";
+                            archivo<<"  <tr><td><i>part_start_"<<x<<" </i></td><td><i>"<<fd.start<<"</i></td></tr>\n";
+                            archivo<<"  <tr><td><i>part_size_"<<x<<" </i></td><td><i>"<<fd.size_total<<"</i></td></tr>\n";
+                            archivo<<"  <tr><td><i>part_name_"<<x<<"</i></td><td><i>"<<fd.name<<"</i></td></tr>\n";
+                            x++;
+                        }
+                    }
+
+                    //archivo<<"  <tr><td><i>---</i></td><td><i>---</i></td></tr>\n";
+
+                    if(mk.ext == 1){
+                        FDISK lg = leer_logica(sizeof(MKDISK), mt.path);
+                        FDISK ex = mk.pos_part[buscar_ext(mk)];
+                        int pos = ex.start+sizeof(FDISK);
+                        int x=1;
+                        while(lg.estado != 0){
+                            archivo<<"  <tr><td><i>EBR "<<x<<"</i></td><td><i> </i></td></tr>\n";
+                            archivo<<"  <tr><td><i>part_status_"<<x<<" </i></td><td><i>"<<lg.estado<<"</i></td></tr>\n";
+                            archivo<<"  <tr><td><i>part_fit_"<<x<<" </i></td><td><i>"<<lg.fit<<"</i></td></tr>\n";
+                            archivo<<"  <tr><td><i>part_start_"<<x<<" </i></td><td><i>"<<pos<<"</i></td></tr>\n";
+                            archivo<<"  <tr><td><i>part_size_"<<x<<" </i></td><td><i>"<<lg.size_total<<"</i></td></tr>\n";
+                            if(lg.next == -1){
+                                archivo<<"  <tr><td><i>part_next_"<<x<<" </i></td><td><i>"<<lg.next<<"</i></td></tr>\n";
+                                archivo<<"  <tr><td><i>part_name_"<<x<<"</i></td><td><i>"<<lg.name<<"</i></td></tr>\n";
+                                break;
+                            }else{
+                                pos += lg.size_total;
+                                archivo<<"  <tr><td><i>part_next_"<<x<<" </i></td><td><i>"<<pos<<"</i></td></tr>\n";
+                            }
+                            archivo<<"  <tr><td><i>part_name_"<<x<<"</i></td><td><i>"<<lg.name<<"</i></td></tr>\n";
+                            x++;
+                            lg = leer_logica(lg.next, mt.path);
+                        }
+                    }
+
+                    archivo<<" </table>>];\n}\n";
+
+                    archivo.close();
+
+                    string gen="dot -Tpng "+path+".dot -o "+path+".png";
+
+                    system(gen.c_str());
 
                 }else{
+
+                    ofstream archivo;
+                    archivo.open(path+".dot",ios::out);
+
+                    archivo<<"digraph{\nnode [fontname=\"Arial\"];\n";
+                    archivo<<"disk[shape=record\n";
+                    archivo<<"label=\"MBR";
+                    double librem = 0;
+
+                    for(int i=0; i<4; i++){
+                        FDISK fd = mk.pos_part[i];
+                        if(fd.estado != 0){
+                            if(fd.estado == -1){
+                                double a = fd.size_total;
+                                double b = mk.size;
+                                librem += fd.size_total;
+                                double s = (a/b)*100;
+                                archivo<<"|LIBRE\\n"<<s<<"%";
+
+                            }else{
+                                if(fd.type == 'P'){
+                                    double a = fd.size;
+                                    double b = mk.size;
+                                    double s = (a/b)*100;
+                                    archivo<<"|PRIMARIA\\n"<<s<<"%";
+                                    s = fd.size_total-fd.size;
+                                    if(s > 0){
+                                        librem += s;
+                                        double c = mk.size;
+                                        s = (s/c)*100;
+                                        archivo<<"|LIBRE\\n"<<s<<"%";
+                                    }
+                                }else{
+                                    //particion ext
+
+                                    archivo<<"|{EXTENDIDA|{";
+                                    FDISK lg = leer_logica(sizeof(MKDISK), mt.path);
+                                    double libred = fd.size_disp;
+
+                                    while(lg.estado != 0){
+                                        if(lg.estado == -1){
+                                            double a = lg.size_total;
+                                            double b = mk.size;
+                                            double s = (a/b)*100;
+                                            archivo<<"|LIBRE\\n"<<s<<"%";
+                                            libred -= lg.size_total;
+
+                                        }else{
+                                            double a = lg.size;
+                                            double b = mk.size;
+                                            double t = (a/b)*100;
+                                            archivo<<"|EBR|LOGICA\\n"<<t<<"%";
+
+                                            if(lg.size_total-lg.size > 0){
+                                                double a = lg.size_total-lg.size;
+                                                double b = mk.size;
+                                                t = (a/b)*100;
+                                                archivo<<"|LIBRE\\n"<<t<<"%";
+                                                libred -= a;
+                                            }
+                                        }
+
+                                        if(lg.next == -1){
+                                            break;
+                                        }
+                                        lg = leer_logica(lg.next, mt.path);
+                                    }
+
+                                    if(libred > 0){
+                                        double b = mk.size;
+                                        libred = (libred/b)*100;
+                                        archivo<<"|LIBRE\\n"<<libred<<"%";
+                                    }
+
+                                    archivo<<"}}";
+
+                                    if(fd.size_total-fd.size > 0){
+                                        double a = fd.size_total-fd.size ;
+                                        double b = mk.size;
+                                        double s = (a/b)*100;
+                                        archivo<<"|LIBRE\\n"<<s<<"%";
+                                    }
+
+                                    librem += fd.size_total-fd.size;
+
+                                }
+
+                                //|{EXTENDIDA|{EBR|LOGICA\\n20%|EBR|LIBRE\n20%}}|
+                            }
+
+                        }
+                    }
+
+                    if(mk.size_disp-librem > 0){
+                        double b = mk.size;
+                        double a = mk.size_disp-librem;
+                        double i = (a/b)*100;
+                        archivo<<"|LIBRE\\n"<<i<<"%";
+                    }
+
+                    archivo<<"\"];\n}";
+
+                    archivo.close();
+
+                    string gen="dot -Tpng "+path+".dot -o "+path+".png";
+
+                    system(gen.c_str());
 
                 }
             }
         }
 
-        vermount();
+        //vermount();
 
     }
 
@@ -1033,7 +1203,7 @@ int ejecutar_exec(){
             comando_unmount(temp);
 
         }else if(temp.valor == "REP"){
-
+            comando_rep(temp);
 
         }else if(temp.tipo == "COMENTARIO"){
             temp.valor = temp.valor.replace("#","");
@@ -1074,12 +1244,14 @@ int comando_exec(NodoAST nodo){
                 if(dato != ""){
                     yy_scan_string(dato.toUtf8().constData());
                     if(yyparse() == 0){
-                        qDebug()<<"LINEA-"+i;
+                        qDebug()<<"-------------------------------------------------------------------------";
+                        qDebug()<<"LINEA-"<<i;
                         qDebug()<<"-------------------------------------------------------------------------";
                         ejecutar_exec();
                         qDebug()<<"-------------------------------------------------------------------------";
                     }
                 }
+                i++;
             }
             archivo.close();
 
@@ -1130,7 +1302,7 @@ int main()
     qDebug()<<"     Comando --> ";
     QString dato="";
     //desactivar_logicas("/home/micky/archivos/fase1/Disco1.disk");
-    p();
+    //p();
 
     while(dato == ""){
         QTextStream qtin(stdin);
