@@ -909,7 +909,8 @@ int comando_rep(NodoAST nodo){
             }
         }else if(temp.tipo == "PATH"){
             temp.valor = temp.valor.replace("\"","");
-            //temp.valor = temp.valor.replace("","");
+            temp.valor = temp.valor.replace(".png",".pdf");
+            temp.valor = temp.valor.replace(".jpg",".pdf");
             temp.valor = temp.valor.replace("/home","/home/micky");
             carpeta(temp.valor);
             path = temp.valor.toStdString();
@@ -994,7 +995,7 @@ int comando_rep(NodoAST nodo){
 
                     archivo.close();
 
-                    string gen="dot -Tpng "+path+".dot -o "+path+".png";
+                    string gen="dot -Tpdf "+path+".dot -o "+path;
 
                     system(gen.c_str());
 
@@ -1103,11 +1104,12 @@ int comando_rep(NodoAST nodo){
 
                     archivo.close();
 
-                    string gen="dot -Tpng "+path+".dot -o "+path+".png";
+                    string gen="dot -Tpdf "+path+".dot -o "+path;
 
                     system(gen.c_str());
 
                 }
+
             }
         }
 
@@ -1209,7 +1211,6 @@ int ejecutar_exec(){
             temp.valor = temp.valor.replace("#","");
             qDebug()<<"Comentario--->"<<temp.valor.toUtf8().constData();
             }
-        qDebug()<<"-------------------------------------------------------------------------";
     }
 
 }
@@ -1245,8 +1246,7 @@ int comando_exec(NodoAST nodo){
                     yy_scan_string(dato.toUtf8().constData());
                     if(yyparse() == 0){
                         qDebug()<<"-------------------------------------------------------------------------";
-                        qDebug()<<"LINEA-"<<i;
-                        qDebug()<<"-------------------------------------------------------------------------";
+                        qDebug()<<"LINEA-"<<i<<"-->"<<dato;
                         ejecutar_exec();
                         qDebug()<<"-------------------------------------------------------------------------";
                     }

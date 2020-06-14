@@ -31,9 +31,15 @@ int yyerror(const char* mens)
 char TEXT [256];
 class NodoAST *nodito;
 }
+/* mkfs_tk login_tk mkgrp_tk rmgrp_tk mkusr_tk rmusr_tk chmod_tk
+   mkfile_tk cat_tk rem_tk edit_tk ren_tk mkdir_tk cp_tk mv_tk find_tk
+   chown_tk chgrp_tk pause_tk
+
+   usr_tk pwd_tk grp_tk ugo_tk r_tk p_tk cont_tk file_tk dest_tk ruta_tk */
 
 
-//TERMINALES DE TIPO TEXT, SON STRINGS
+/*TERMINALES*/
+//Primera fase
 %token<TEXT> mkdisk_tk;
 %token<TEXT> rmdisk_tk;
 %token<TEXT> fdisk_tk;
@@ -42,6 +48,29 @@ class NodoAST *nodito;
 %token<TEXT> exec_tk;
 %token<TEXT> rep_tk;
 
+//Segunda fase
+%token<TEXT> mkfs_tk;
+%token<TEXT> login_tk;
+%token<TEXT> mkgrp_tk;
+%token<TEXT> rmgrp_tk;
+%token<TEXT> mkusr_tk;
+%token<TEXT> rmusr_tk;
+%token<TEXT> chmod_tk;
+%token<TEXT> mkfile_tk;
+%token<TEXT> cat_tk;
+%token<TEXT> rem_tk;
+%token<TEXT> edit_tk;
+%token<TEXT> ren_tk;
+%token<TEXT> mkdir_tk;
+%token<TEXT> cp_tk;
+%token<TEXT> mv_tk;
+%token<TEXT> find_tk;
+%token<TEXT> chown_tk;
+%token<TEXT> chgrp_tk;
+%token<TEXT> pause_tk;
+
+
+//Primera fase
 %token<TEXT> size_tk;
 %token<TEXT> fit_tk;
 %token<TEXT> unit_tk;
@@ -59,7 +88,21 @@ class NodoAST *nodito;
 %token<TEXT> num_tk;
 %token<TEXT> nun_tk;
 
-/*No terimanesl*/
+//Segunda fase
+%token<TEXT> usr_tk;
+%token<TEXT> pwd_tk;
+%token<TEXT> grp_tk;
+%token<TEXT> ugo_tk;
+%token<TEXT> r_tk;
+%token<TEXT> p_tk;
+%token<TEXT> cont_tk;
+%token<TEXT> file_tk;
+%token<TEXT> dest_tk;
+%token<TEXT> ruta_tk;
+
+
+/*NO TERMINALES*/
+//Primera fase
 %type<nodito> INICIO;
 %type<nodito> LISTA;
 %type<nodito> TIPOS;
@@ -85,6 +128,12 @@ class NodoAST *nodito;
 %type<nodito> EXEC_L;
 %type<nodito> EXEC_P;
 
+//Segunda fase
+%type<nodito> MKFS;
+%type<nodito> MKFS_L;
+%type<nodito> MKFS_P;
+
+//Primera fase
 %type<nodito> SIZE;
 %type<nodito> FIT;
 %type<nodito> UNIT;
@@ -96,9 +145,14 @@ class NodoAST *nodito;
 %type<nodito> ID;
 %type<nodito> COMENTARIO;
 
+//Segunda fase
+
+
+
 %start INICIO
 %%
-
+/*NO TERMINALES*/
+//Primera fase
 INICIO : LISTA                      { root = $1; }
 ;
 
@@ -114,6 +168,8 @@ TIPOS: MKDISK                       { $$ = $1; }
      | REP                          { $$ = $1; }
      | EXEC                         { $$ = $1; }
      | COMENTARIO                   { $$ = $1; }
+
+     | MKFS                         { $$ = $1; }
 ;
 
 MKDISK: mkdisk_tk MKDISK_L          { $$ = $2; }
@@ -193,15 +249,27 @@ EXEC: exec_tk EXEC_L                { $$ = $2; }
 ;
 
 EXEC_L: EXEC_L EXEC_P               { $$ = $1; $1->add(*$2); }
-     | EXEC_P                       { $$ = new NodoAST("EXEC", "EXEC", @1.first_line, @1.first_column); $$->add(*$1); }
+      | EXEC_P                      { $$ = new NodoAST("EXEC", "EXEC", @1.first_line, @1.first_column); $$->add(*$1); }
 ;
 
 EXEC_P: PATH                        { $$ = $1; }
 ;
 
+//Segunda fase
+MKFS: mkfs_tk MKFS_L                { $$ = $2; }
+;
+
+MKFS_L: MKFS_L MKFS_P               { $$ = $1; $1->add(*$2); }
+      | MKFS_P                      { $$ = new NodoAST("MKFS", "MKFS", @1.first_line, @1.first_column); $$->add(*$1); }
+;
+
+MKFS_P: ID                          { $$ = $1; }
+      | TYPE                        { $$ = $1; }
+;
 
 
 /*TERMINALES*/
+//Primera fase
 SIZE: size_tk igual_tk num_tk       { $$ = new NodoAST("SIZE", $3, @1.first_line, @1.first_column); }
 ;
 
@@ -233,6 +301,8 @@ ID: idk_tk igual_tk id_tk           { $$ = new NodoAST("ID", $3, @1.first_line, 
 
 COMENTARIO: comentario_tk           { $$ = new NodoAST("COMENTARIO", $1, @1.first_line, @1.first_column); }
 ;
+
+//Segunda fase
 
 
 %%

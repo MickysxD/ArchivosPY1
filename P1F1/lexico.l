@@ -37,7 +37,6 @@ com         "#"[^"\n"]*
 INITIAL
 {
 
-
 "mkdisk"        { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return mkdisk_tk; }
 "rmdisk"        { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return rmdisk_tk; }
 "fdisk"         { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return fdisk_tk; }
@@ -45,6 +44,27 @@ INITIAL
 "unmount"       { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return unmount_tk; }
 "exec"          { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return exec_tk; }
 "rep"           { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return rep_tk; }
+
+"mkfs"          { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return mkfs_tk; }
+"login"         { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return login_tk; }
+"mkgrp"         { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return mkgrp_tk; }
+"rmgrp"         { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return rmgrp_tk; }
+"mkusr"         { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return mkusr_tk; }
+"rmusr"         { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return rmusr_tk; }
+"chmod"         { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return chmod_tk; }
+"mkfile"        { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return mkfile_tk; }
+"cat"           { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return cat_tk; }
+"rem"           { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return rem_tk; }
+"edit"          { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return edit_tk; }
+"ren"           { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return ren_tk; }
+"mkdir"         { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return mkdir_tk; }
+"cp"            { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return cp_tk; }
+"mv"            { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return mv_tk; }
+"find"          { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return find_tk; }
+"chown"         { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return chown_tk; }
+"chgrp"         { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return chgrp_tk; }
+"pause"         { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return pause_tk; }
+
 
 "-size"         { columna=columna+ anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return size_tk; }
 "-fit"          { columna=columna+ anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return fit_tk; }
@@ -55,6 +75,18 @@ INITIAL
 "-name"         { columna=columna+ anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return name_tk; }
 "-add"          { columna=columna+ anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return add_tk; }
 "-id"           { columna=columna+ anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return idk_tk; }
+
+"-usr"          { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return ust_tk; }
+"-pwd"          { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return pwd_tk; }
+"-grp"          { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return grp_tk; }
+"-ugo"          { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return ugo_tk; }
+"-r"            { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return r_tk; }
+"-p"            { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return p_tk; }
+"-cont"         { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return cont_tk; }
+"-file"         { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return file_tk; }
+"-dest"         { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return dest_tk; }
+"-ruta"         { columna=columna+anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return ruta_tk; }
+
 
 "="             { columna=columna+ anterior; anterior=strlen(yytext); strcpy(yylval.TEXT,yytext); return igual_tk; }
 

@@ -52,22 +52,51 @@ extern int yydebug;
     unmount_tk = 262,
     exec_tk = 263,
     rep_tk = 264,
-    size_tk = 265,
-    fit_tk = 266,
-    unit_tk = 267,
-    path_tk = 268,
-    type_tk = 269,
-    delete_tk = 270,
-    name_tk = 271,
-    add_tk = 272,
-    idk_tk = 273,
-    igual_tk = 274,
-    comentario_tk = 275,
-    id_tk = 276,
-    rut_tk = 277,
-    cad_tk = 278,
-    num_tk = 279,
-    nun_tk = 280
+    mkfs_tk = 265,
+    login_tk = 266,
+    mkgrp_tk = 267,
+    rmgrp_tk = 268,
+    mkusr_tk = 269,
+    rmusr_tk = 270,
+    chmod_tk = 271,
+    mkfile_tk = 272,
+    cat_tk = 273,
+    rem_tk = 274,
+    edit_tk = 275,
+    ren_tk = 276,
+    mkdir_tk = 277,
+    cp_tk = 278,
+    mv_tk = 279,
+    find_tk = 280,
+    chown_tk = 281,
+    chgrp_tk = 282,
+    pause_tk = 283,
+    size_tk = 284,
+    fit_tk = 285,
+    unit_tk = 286,
+    path_tk = 287,
+    type_tk = 288,
+    delete_tk = 289,
+    name_tk = 290,
+    add_tk = 291,
+    idk_tk = 292,
+    igual_tk = 293,
+    comentario_tk = 294,
+    id_tk = 295,
+    rut_tk = 296,
+    cad_tk = 297,
+    num_tk = 298,
+    nun_tk = 299,
+    usr_tk = 300,
+    pwd_tk = 301,
+    grp_tk = 302,
+    ugo_tk = 303,
+    r_tk = 304,
+    p_tk = 305,
+    cont_tk = 306,
+    file_tk = 307,
+    dest_tk = 308,
+    ruta_tk = 309
   };
 #endif
 
@@ -82,7 +111,7 @@ union YYSTYPE
 char TEXT [256];
 class NodoAST *nodito;
 
-#line 86 "parser.h" /* yacc.c:1909  */
+#line 115 "parser.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

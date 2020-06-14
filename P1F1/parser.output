@@ -1,3 +1,35 @@
+Terminales no usados en la gramática
+
+   login_tk
+   mkgrp_tk
+   rmgrp_tk
+   mkusr_tk
+   rmusr_tk
+   chmod_tk
+   mkfile_tk
+   cat_tk
+   rem_tk
+   edit_tk
+   ren_tk
+   mkdir_tk
+   cp_tk
+   mv_tk
+   find_tk
+   chown_tk
+   chgrp_tk
+   pause_tk
+   usr_tk
+   pwd_tk
+   grp_tk
+   ugo_tk
+   r_tk
+   p_tk
+   cont_tk
+   file_tk
+   dest_tk
+   ruta_tk
+
+
 Gramática
 
     0 $accept: INICIO $end
@@ -15,193 +47,237 @@ Gramática
     9      | REP
    10      | EXEC
    11      | COMENTARIO
+   12      | MKFS
 
-   12 MKDISK: mkdisk_tk MKDISK_L
+   13 MKDISK: mkdisk_tk MKDISK_L
 
-   13 MKDISK_L: MKDISK_L MKDISK_P
-   14         | MKDISK_P
+   14 MKDISK_L: MKDISK_L MKDISK_P
+   15         | MKDISK_P
 
-   15 MKDISK_P: SIZE
-   16         | FIT
-   17         | UNIT
-   18         | PATH
+   16 MKDISK_P: SIZE
+   17         | FIT
+   18         | UNIT
+   19         | PATH
 
-   19 RMDISK: rmdisk_tk RMDISK_L
+   20 RMDISK: rmdisk_tk RMDISK_L
 
-   20 RMDISK_L: RMDISK_L RMDISK_P
-   21         | RMDISK_P
+   21 RMDISK_L: RMDISK_L RMDISK_P
+   22         | RMDISK_P
 
-   22 RMDISK_P: PATH
+   23 RMDISK_P: PATH
 
-   23 FDISK: fdisk_tk FDISK_L
+   24 FDISK: fdisk_tk FDISK_L
 
-   24 FDISK_L: FDISK_L FDISK_P
-   25        | FDISK_P
+   25 FDISK_L: FDISK_L FDISK_P
+   26        | FDISK_P
 
-   26 FDISK_P: SIZE
-   27        | UNIT
-   28        | PATH
-   29        | TYPE
-   30        | FIT
-   31        | DELETE
-   32        | NAME
-   33        | ADD
+   27 FDISK_P: SIZE
+   28        | UNIT
+   29        | PATH
+   30        | TYPE
+   31        | FIT
+   32        | DELETE
+   33        | NAME
+   34        | ADD
 
-   34 MOUNT: mount_tk MOUNT_L
+   35 MOUNT: mount_tk MOUNT_L
 
-   35 MOUNT_L: MOUNT_L MOUNT_P
-   36        | MOUNT_P
+   36 MOUNT_L: MOUNT_L MOUNT_P
+   37        | MOUNT_P
 
-   37 MOUNT_P: PATH
-   38        | NAME
+   38 MOUNT_P: PATH
+   39        | NAME
 
-   39 UNMOUNT: unmount_tk UNMOUNT_L
+   40 UNMOUNT: unmount_tk UNMOUNT_L
 
-   40 UNMOUNT_L: UNMOUNT_L UNMOUNT_P
-   41          | UNMOUNT_P
+   41 UNMOUNT_L: UNMOUNT_L UNMOUNT_P
+   42          | UNMOUNT_P
 
-   42 UNMOUNT_P: ID
+   43 UNMOUNT_P: ID
 
-   43 REP: rep_tk REP_L
+   44 REP: rep_tk REP_L
 
-   44 REP_L: REP_L REP_P
-   45      | REP_P
+   45 REP_L: REP_L REP_P
+   46      | REP_P
 
-   46 REP_P: PATH
-   47      | NAME
-   48      | ID
+   47 REP_P: PATH
+   48      | NAME
+   49      | ID
 
-   49 EXEC: exec_tk EXEC_L
+   50 EXEC: exec_tk EXEC_L
 
-   50 EXEC_L: EXEC_L EXEC_P
-   51       | EXEC_P
+   51 EXEC_L: EXEC_L EXEC_P
+   52       | EXEC_P
 
-   52 EXEC_P: PATH
+   53 EXEC_P: PATH
 
-   53 SIZE: size_tk igual_tk num_tk
+   54 MKFS: mkfs_tk MKFS_L
 
-   54 FIT: fit_tk igual_tk id_tk
+   55 MKFS_L: MKFS_L MKFS_P
+   56       | MKFS_P
 
-   55 UNIT: unit_tk igual_tk id_tk
+   57 MKFS_P: ID
+   58       | TYPE
 
-   56 PATH: path_tk igual_tk rut_tk
+   59 SIZE: size_tk igual_tk num_tk
 
-   57 TYPE: type_tk igual_tk id_tk
+   60 FIT: fit_tk igual_tk id_tk
 
-   58 DELETE: delete_tk igual_tk id_tk
+   61 UNIT: unit_tk igual_tk id_tk
 
-   59 NAME: name_tk igual_tk id_tk
-   60     | name_tk igual_tk cad_tk
+   62 PATH: path_tk igual_tk rut_tk
 
-   61 ADD: add_tk igual_tk num_tk
-   62    | add_tk igual_tk nun_tk
+   63 TYPE: type_tk igual_tk id_tk
 
-   63 ID: idk_tk igual_tk id_tk
+   64 DELETE: delete_tk igual_tk id_tk
 
-   64 COMENTARIO: comentario_tk
+   65 NAME: name_tk igual_tk id_tk
+   66     | name_tk igual_tk cad_tk
+
+   67 ADD: add_tk igual_tk num_tk
+   68    | add_tk igual_tk nun_tk
+
+   69 ID: idk_tk igual_tk id_tk
+
+   70 COMENTARIO: comentario_tk
 
 
 Terminales con las reglas donde aparecen
 
 $end (0) 0
 error (256)
-mkdisk_tk (258) 12
-rmdisk_tk (259) 19
-fdisk_tk (260) 23
-mount_tk (261) 34
-unmount_tk (262) 39
-exec_tk (263) 49
-rep_tk (264) 43
-size_tk (265) 53
-fit_tk (266) 54
-unit_tk (267) 55
-path_tk (268) 56
-type_tk (269) 57
-delete_tk (270) 58
-name_tk (271) 59 60
-add_tk (272) 61 62
-idk_tk (273) 63
-igual_tk (274) 53 54 55 56 57 58 59 60 61 62 63
-comentario_tk (275) 64
-id_tk (276) 54 55 57 58 59 63
-rut_tk (277) 56
-cad_tk (278) 60
-num_tk (279) 53 61
-nun_tk (280) 62
+mkdisk_tk (258) 13
+rmdisk_tk (259) 20
+fdisk_tk (260) 24
+mount_tk (261) 35
+unmount_tk (262) 40
+exec_tk (263) 50
+rep_tk (264) 44
+mkfs_tk (265) 54
+login_tk (266)
+mkgrp_tk (267)
+rmgrp_tk (268)
+mkusr_tk (269)
+rmusr_tk (270)
+chmod_tk (271)
+mkfile_tk (272)
+cat_tk (273)
+rem_tk (274)
+edit_tk (275)
+ren_tk (276)
+mkdir_tk (277)
+cp_tk (278)
+mv_tk (279)
+find_tk (280)
+chown_tk (281)
+chgrp_tk (282)
+pause_tk (283)
+size_tk (284) 59
+fit_tk (285) 60
+unit_tk (286) 61
+path_tk (287) 62
+type_tk (288) 63
+delete_tk (289) 64
+name_tk (290) 65 66
+add_tk (291) 67 68
+idk_tk (292) 69
+igual_tk (293) 59 60 61 62 63 64 65 66 67 68 69
+comentario_tk (294) 70
+id_tk (295) 60 61 63 64 65 69
+rut_tk (296) 62
+cad_tk (297) 66
+num_tk (298) 59 67
+nun_tk (299) 68
+usr_tk (300)
+pwd_tk (301)
+grp_tk (302)
+ugo_tk (303)
+r_tk (304)
+p_tk (305)
+cont_tk (306)
+file_tk (307)
+dest_tk (308)
+ruta_tk (309)
 
 
 No terminales con las reglas donde aparecen
 
-$accept (26)
+$accept (55)
     en la izquierda: 0
-INICIO (27)
+INICIO (56)
     en la izquierda: 1, en la derecha: 0
-LISTA (28)
+LISTA (57)
     en la izquierda: 2 3, en la derecha: 1 2
-TIPOS (29)
-    en la izquierda: 4 5 6 7 8 9 10 11, en la derecha: 2 3
-MKDISK (30)
-    en la izquierda: 12, en la derecha: 4
-MKDISK_L (31)
-    en la izquierda: 13 14, en la derecha: 12 13
-MKDISK_P (32)
-    en la izquierda: 15 16 17 18, en la derecha: 13 14
-RMDISK (33)
-    en la izquierda: 19, en la derecha: 5
-RMDISK_L (34)
-    en la izquierda: 20 21, en la derecha: 19 20
-RMDISK_P (35)
-    en la izquierda: 22, en la derecha: 20 21
-FDISK (36)
-    en la izquierda: 23, en la derecha: 6
-FDISK_L (37)
-    en la izquierda: 24 25, en la derecha: 23 24
-FDISK_P (38)
-    en la izquierda: 26 27 28 29 30 31 32 33, en la derecha: 24 25
-MOUNT (39)
-    en la izquierda: 34, en la derecha: 7
-MOUNT_L (40)
-    en la izquierda: 35 36, en la derecha: 34 35
-MOUNT_P (41)
-    en la izquierda: 37 38, en la derecha: 35 36
-UNMOUNT (42)
-    en la izquierda: 39, en la derecha: 8
-UNMOUNT_L (43)
-    en la izquierda: 40 41, en la derecha: 39 40
-UNMOUNT_P (44)
-    en la izquierda: 42, en la derecha: 40 41
-REP (45)
-    en la izquierda: 43, en la derecha: 9
-REP_L (46)
-    en la izquierda: 44 45, en la derecha: 43 44
-REP_P (47)
-    en la izquierda: 46 47 48, en la derecha: 44 45
-EXEC (48)
-    en la izquierda: 49, en la derecha: 10
-EXEC_L (49)
-    en la izquierda: 50 51, en la derecha: 49 50
-EXEC_P (50)
-    en la izquierda: 52, en la derecha: 50 51
-SIZE (51)
-    en la izquierda: 53, en la derecha: 15 26
-FIT (52)
-    en la izquierda: 54, en la derecha: 16 30
-UNIT (53)
-    en la izquierda: 55, en la derecha: 17 27
-PATH (54)
-    en la izquierda: 56, en la derecha: 18 22 28 37 46 52
-TYPE (55)
-    en la izquierda: 57, en la derecha: 29
-DELETE (56)
-    en la izquierda: 58, en la derecha: 31
-NAME (57)
-    en la izquierda: 59 60, en la derecha: 32 38 47
-ADD (58)
-    en la izquierda: 61 62, en la derecha: 33
-ID (59)
-    en la izquierda: 63, en la derecha: 42 48
-COMENTARIO (60)
-    en la izquierda: 64, en la derecha: 11
+TIPOS (58)
+    en la izquierda: 4 5 6 7 8 9 10 11 12, en la derecha: 2 3
+MKDISK (59)
+    en la izquierda: 13, en la derecha: 4
+MKDISK_L (60)
+    en la izquierda: 14 15, en la derecha: 13 14
+MKDISK_P (61)
+    en la izquierda: 16 17 18 19, en la derecha: 14 15
+RMDISK (62)
+    en la izquierda: 20, en la derecha: 5
+RMDISK_L (63)
+    en la izquierda: 21 22, en la derecha: 20 21
+RMDISK_P (64)
+    en la izquierda: 23, en la derecha: 21 22
+FDISK (65)
+    en la izquierda: 24, en la derecha: 6
+FDISK_L (66)
+    en la izquierda: 25 26, en la derecha: 24 25
+FDISK_P (67)
+    en la izquierda: 27 28 29 30 31 32 33 34, en la derecha: 25 26
+MOUNT (68)
+    en la izquierda: 35, en la derecha: 7
+MOUNT_L (69)
+    en la izquierda: 36 37, en la derecha: 35 36
+MOUNT_P (70)
+    en la izquierda: 38 39, en la derecha: 36 37
+UNMOUNT (71)
+    en la izquierda: 40, en la derecha: 8
+UNMOUNT_L (72)
+    en la izquierda: 41 42, en la derecha: 40 41
+UNMOUNT_P (73)
+    en la izquierda: 43, en la derecha: 41 42
+REP (74)
+    en la izquierda: 44, en la derecha: 9
+REP_L (75)
+    en la izquierda: 45 46, en la derecha: 44 45
+REP_P (76)
+    en la izquierda: 47 48 49, en la derecha: 45 46
+EXEC (77)
+    en la izquierda: 50, en la derecha: 10
+EXEC_L (78)
+    en la izquierda: 51 52, en la derecha: 50 51
+EXEC_P (79)
+    en la izquierda: 53, en la derecha: 51 52
+MKFS (80)
+    en la izquierda: 54, en la derecha: 12
+MKFS_L (81)
+    en la izquierda: 55 56, en la derecha: 54 55
+MKFS_P (82)
+    en la izquierda: 57 58, en la derecha: 55 56
+SIZE (83)
+    en la izquierda: 59, en la derecha: 16 27
+FIT (84)
+    en la izquierda: 60, en la derecha: 17 31
+UNIT (85)
+    en la izquierda: 61, en la derecha: 18 28
+PATH (86)
+    en la izquierda: 62, en la derecha: 19 23 29 38 47 53
+TYPE (87)
+    en la izquierda: 63, en la derecha: 30 58
+DELETE (88)
+    en la izquierda: 64, en la derecha: 32
+NAME (89)
+    en la izquierda: 65 66, en la derecha: 33 39 48
+ADD (90)
+    en la izquierda: 67 68, en la derecha: 34
+ID (91)
+    en la izquierda: 69, en la derecha: 43 49 57
+COMENTARIO (92)
+    en la izquierda: 70, en la derecha: 11
 
 
 Estado 0
@@ -215,139 +291,154 @@ Estado 0
     unmount_tk     desplazar e ir al estado 5
     exec_tk        desplazar e ir al estado 6
     rep_tk         desplazar e ir al estado 7
-    comentario_tk  desplazar e ir al estado 8
+    mkfs_tk        desplazar e ir al estado 8
+    comentario_tk  desplazar e ir al estado 9
 
-    INICIO      ir al estado 9
-    LISTA       ir al estado 10
-    TIPOS       ir al estado 11
-    MKDISK      ir al estado 12
-    RMDISK      ir al estado 13
-    FDISK       ir al estado 14
-    MOUNT       ir al estado 15
-    UNMOUNT     ir al estado 16
-    REP         ir al estado 17
-    EXEC        ir al estado 18
-    COMENTARIO  ir al estado 19
+    INICIO      ir al estado 10
+    LISTA       ir al estado 11
+    TIPOS       ir al estado 12
+    MKDISK      ir al estado 13
+    RMDISK      ir al estado 14
+    FDISK       ir al estado 15
+    MOUNT       ir al estado 16
+    UNMOUNT     ir al estado 17
+    REP         ir al estado 18
+    EXEC        ir al estado 19
+    MKFS        ir al estado 20
+    COMENTARIO  ir al estado 21
 
 
 Estado 1
 
-   12 MKDISK: mkdisk_tk . MKDISK_L
+   13 MKDISK: mkdisk_tk . MKDISK_L
 
-    size_tk  desplazar e ir al estado 20
-    fit_tk   desplazar e ir al estado 21
-    unit_tk  desplazar e ir al estado 22
-    path_tk  desplazar e ir al estado 23
+    size_tk  desplazar e ir al estado 22
+    fit_tk   desplazar e ir al estado 23
+    unit_tk  desplazar e ir al estado 24
+    path_tk  desplazar e ir al estado 25
 
-    MKDISK_L  ir al estado 24
-    MKDISK_P  ir al estado 25
-    SIZE      ir al estado 26
-    FIT       ir al estado 27
-    UNIT      ir al estado 28
-    PATH      ir al estado 29
+    MKDISK_L  ir al estado 26
+    MKDISK_P  ir al estado 27
+    SIZE      ir al estado 28
+    FIT       ir al estado 29
+    UNIT      ir al estado 30
+    PATH      ir al estado 31
 
 
 Estado 2
 
-   19 RMDISK: rmdisk_tk . RMDISK_L
+   20 RMDISK: rmdisk_tk . RMDISK_L
 
-    path_tk  desplazar e ir al estado 23
+    path_tk  desplazar e ir al estado 25
 
-    RMDISK_L  ir al estado 30
-    RMDISK_P  ir al estado 31
-    PATH      ir al estado 32
+    RMDISK_L  ir al estado 32
+    RMDISK_P  ir al estado 33
+    PATH      ir al estado 34
 
 
 Estado 3
 
-   23 FDISK: fdisk_tk . FDISK_L
+   24 FDISK: fdisk_tk . FDISK_L
 
-    size_tk    desplazar e ir al estado 20
-    fit_tk     desplazar e ir al estado 21
-    unit_tk    desplazar e ir al estado 22
-    path_tk    desplazar e ir al estado 23
-    type_tk    desplazar e ir al estado 33
-    delete_tk  desplazar e ir al estado 34
-    name_tk    desplazar e ir al estado 35
-    add_tk     desplazar e ir al estado 36
+    size_tk    desplazar e ir al estado 22
+    fit_tk     desplazar e ir al estado 23
+    unit_tk    desplazar e ir al estado 24
+    path_tk    desplazar e ir al estado 25
+    type_tk    desplazar e ir al estado 35
+    delete_tk  desplazar e ir al estado 36
+    name_tk    desplazar e ir al estado 37
+    add_tk     desplazar e ir al estado 38
 
-    FDISK_L  ir al estado 37
-    FDISK_P  ir al estado 38
-    SIZE     ir al estado 39
-    FIT      ir al estado 40
-    UNIT     ir al estado 41
-    PATH     ir al estado 42
-    TYPE     ir al estado 43
-    DELETE   ir al estado 44
-    NAME     ir al estado 45
-    ADD      ir al estado 46
+    FDISK_L  ir al estado 39
+    FDISK_P  ir al estado 40
+    SIZE     ir al estado 41
+    FIT      ir al estado 42
+    UNIT     ir al estado 43
+    PATH     ir al estado 44
+    TYPE     ir al estado 45
+    DELETE   ir al estado 46
+    NAME     ir al estado 47
+    ADD      ir al estado 48
 
 
 Estado 4
 
-   34 MOUNT: mount_tk . MOUNT_L
+   35 MOUNT: mount_tk . MOUNT_L
 
-    path_tk  desplazar e ir al estado 23
-    name_tk  desplazar e ir al estado 35
+    path_tk  desplazar e ir al estado 25
+    name_tk  desplazar e ir al estado 37
 
-    MOUNT_L  ir al estado 47
-    MOUNT_P  ir al estado 48
-    PATH     ir al estado 49
-    NAME     ir al estado 50
+    MOUNT_L  ir al estado 49
+    MOUNT_P  ir al estado 50
+    PATH     ir al estado 51
+    NAME     ir al estado 52
 
 
 Estado 5
 
-   39 UNMOUNT: unmount_tk . UNMOUNT_L
+   40 UNMOUNT: unmount_tk . UNMOUNT_L
 
-    idk_tk  desplazar e ir al estado 51
+    idk_tk  desplazar e ir al estado 53
 
-    UNMOUNT_L  ir al estado 52
-    UNMOUNT_P  ir al estado 53
-    ID         ir al estado 54
+    UNMOUNT_L  ir al estado 54
+    UNMOUNT_P  ir al estado 55
+    ID         ir al estado 56
 
 
 Estado 6
 
-   49 EXEC: exec_tk . EXEC_L
+   50 EXEC: exec_tk . EXEC_L
 
-    path_tk  desplazar e ir al estado 23
+    path_tk  desplazar e ir al estado 25
 
-    EXEC_L  ir al estado 55
-    EXEC_P  ir al estado 56
-    PATH    ir al estado 57
+    EXEC_L  ir al estado 57
+    EXEC_P  ir al estado 58
+    PATH    ir al estado 59
 
 
 Estado 7
 
-   43 REP: rep_tk . REP_L
+   44 REP: rep_tk . REP_L
 
-    path_tk  desplazar e ir al estado 23
-    name_tk  desplazar e ir al estado 35
-    idk_tk   desplazar e ir al estado 51
+    path_tk  desplazar e ir al estado 25
+    name_tk  desplazar e ir al estado 37
+    idk_tk   desplazar e ir al estado 53
 
-    REP_L  ir al estado 58
-    REP_P  ir al estado 59
-    PATH   ir al estado 60
-    NAME   ir al estado 61
-    ID     ir al estado 62
+    REP_L  ir al estado 60
+    REP_P  ir al estado 61
+    PATH   ir al estado 62
+    NAME   ir al estado 63
+    ID     ir al estado 64
 
 
 Estado 8
 
-   64 COMENTARIO: comentario_tk .
+   54 MKFS: mkfs_tk . MKFS_L
 
-    $default  reduce usando la regla 64 (COMENTARIO)
+    type_tk  desplazar e ir al estado 35
+    idk_tk   desplazar e ir al estado 53
+
+    MKFS_L  ir al estado 65
+    MKFS_P  ir al estado 66
+    TYPE    ir al estado 67
+    ID      ir al estado 68
 
 
 Estado 9
 
-    0 $accept: INICIO . $end
+   70 COMENTARIO: comentario_tk .
 
-    $end  desplazar e ir al estado 63
+    $default  reduce usando la regla 70 (COMENTARIO)
 
 
 Estado 10
+
+    0 $accept: INICIO . $end
+
+    $end  desplazar e ir al estado 69
+
+
+Estado 11
 
     1 INICIO: LISTA .
     2 LISTA: LISTA . TIPOS
@@ -359,657 +450,709 @@ Estado 10
     unmount_tk     desplazar e ir al estado 5
     exec_tk        desplazar e ir al estado 6
     rep_tk         desplazar e ir al estado 7
-    comentario_tk  desplazar e ir al estado 8
+    mkfs_tk        desplazar e ir al estado 8
+    comentario_tk  desplazar e ir al estado 9
 
     $default  reduce usando la regla 1 (INICIO)
 
-    TIPOS       ir al estado 64
-    MKDISK      ir al estado 12
-    RMDISK      ir al estado 13
-    FDISK       ir al estado 14
-    MOUNT       ir al estado 15
-    UNMOUNT     ir al estado 16
-    REP         ir al estado 17
-    EXEC        ir al estado 18
-    COMENTARIO  ir al estado 19
+    TIPOS       ir al estado 70
+    MKDISK      ir al estado 13
+    RMDISK      ir al estado 14
+    FDISK       ir al estado 15
+    MOUNT       ir al estado 16
+    UNMOUNT     ir al estado 17
+    REP         ir al estado 18
+    EXEC        ir al estado 19
+    MKFS        ir al estado 20
+    COMENTARIO  ir al estado 21
 
 
-Estado 11
+Estado 12
 
     3 LISTA: TIPOS .
 
     $default  reduce usando la regla 3 (LISTA)
 
 
-Estado 12
+Estado 13
 
     4 TIPOS: MKDISK .
 
     $default  reduce usando la regla 4 (TIPOS)
 
 
-Estado 13
+Estado 14
 
     5 TIPOS: RMDISK .
 
     $default  reduce usando la regla 5 (TIPOS)
 
 
-Estado 14
+Estado 15
 
     6 TIPOS: FDISK .
 
     $default  reduce usando la regla 6 (TIPOS)
 
 
-Estado 15
+Estado 16
 
     7 TIPOS: MOUNT .
 
     $default  reduce usando la regla 7 (TIPOS)
 
 
-Estado 16
+Estado 17
 
     8 TIPOS: UNMOUNT .
 
     $default  reduce usando la regla 8 (TIPOS)
 
 
-Estado 17
+Estado 18
 
     9 TIPOS: REP .
 
     $default  reduce usando la regla 9 (TIPOS)
 
 
-Estado 18
+Estado 19
 
    10 TIPOS: EXEC .
 
     $default  reduce usando la regla 10 (TIPOS)
 
 
-Estado 19
+Estado 20
+
+   12 TIPOS: MKFS .
+
+    $default  reduce usando la regla 12 (TIPOS)
+
+
+Estado 21
 
    11 TIPOS: COMENTARIO .
 
     $default  reduce usando la regla 11 (TIPOS)
 
 
-Estado 20
-
-   53 SIZE: size_tk . igual_tk num_tk
-
-    igual_tk  desplazar e ir al estado 65
-
-
-Estado 21
-
-   54 FIT: fit_tk . igual_tk id_tk
-
-    igual_tk  desplazar e ir al estado 66
-
-
 Estado 22
 
-   55 UNIT: unit_tk . igual_tk id_tk
-
-    igual_tk  desplazar e ir al estado 67
-
-
-Estado 23
-
-   56 PATH: path_tk . igual_tk rut_tk
-
-    igual_tk  desplazar e ir al estado 68
-
-
-Estado 24
-
-   12 MKDISK: mkdisk_tk MKDISK_L .
-   13 MKDISK_L: MKDISK_L . MKDISK_P
-
-    size_tk  desplazar e ir al estado 20
-    fit_tk   desplazar e ir al estado 21
-    unit_tk  desplazar e ir al estado 22
-    path_tk  desplazar e ir al estado 23
-
-    $default  reduce usando la regla 12 (MKDISK)
-
-    MKDISK_P  ir al estado 69
-    SIZE      ir al estado 26
-    FIT       ir al estado 27
-    UNIT      ir al estado 28
-    PATH      ir al estado 29
-
-
-Estado 25
-
-   14 MKDISK_L: MKDISK_P .
-
-    $default  reduce usando la regla 14 (MKDISK_L)
-
-
-Estado 26
-
-   15 MKDISK_P: SIZE .
-
-    $default  reduce usando la regla 15 (MKDISK_P)
-
-
-Estado 27
-
-   16 MKDISK_P: FIT .
-
-    $default  reduce usando la regla 16 (MKDISK_P)
-
-
-Estado 28
-
-   17 MKDISK_P: UNIT .
-
-    $default  reduce usando la regla 17 (MKDISK_P)
-
-
-Estado 29
-
-   18 MKDISK_P: PATH .
-
-    $default  reduce usando la regla 18 (MKDISK_P)
-
-
-Estado 30
-
-   19 RMDISK: rmdisk_tk RMDISK_L .
-   20 RMDISK_L: RMDISK_L . RMDISK_P
-
-    path_tk  desplazar e ir al estado 23
-
-    $default  reduce usando la regla 19 (RMDISK)
-
-    RMDISK_P  ir al estado 70
-    PATH      ir al estado 32
-
-
-Estado 31
-
-   21 RMDISK_L: RMDISK_P .
-
-    $default  reduce usando la regla 21 (RMDISK_L)
-
-
-Estado 32
-
-   22 RMDISK_P: PATH .
-
-    $default  reduce usando la regla 22 (RMDISK_P)
-
-
-Estado 33
-
-   57 TYPE: type_tk . igual_tk id_tk
+   59 SIZE: size_tk . igual_tk num_tk
 
     igual_tk  desplazar e ir al estado 71
 
 
-Estado 34
+Estado 23
 
-   58 DELETE: delete_tk . igual_tk id_tk
+   60 FIT: fit_tk . igual_tk id_tk
 
     igual_tk  desplazar e ir al estado 72
 
 
-Estado 35
+Estado 24
 
-   59 NAME: name_tk . igual_tk id_tk
-   60     | name_tk . igual_tk cad_tk
+   61 UNIT: unit_tk . igual_tk id_tk
 
     igual_tk  desplazar e ir al estado 73
 
 
-Estado 36
+Estado 25
 
-   61 ADD: add_tk . igual_tk num_tk
-   62    | add_tk . igual_tk nun_tk
+   62 PATH: path_tk . igual_tk rut_tk
 
     igual_tk  desplazar e ir al estado 74
 
 
+Estado 26
+
+   13 MKDISK: mkdisk_tk MKDISK_L .
+   14 MKDISK_L: MKDISK_L . MKDISK_P
+
+    size_tk  desplazar e ir al estado 22
+    fit_tk   desplazar e ir al estado 23
+    unit_tk  desplazar e ir al estado 24
+    path_tk  desplazar e ir al estado 25
+
+    $default  reduce usando la regla 13 (MKDISK)
+
+    MKDISK_P  ir al estado 75
+    SIZE      ir al estado 28
+    FIT       ir al estado 29
+    UNIT      ir al estado 30
+    PATH      ir al estado 31
+
+
+Estado 27
+
+   15 MKDISK_L: MKDISK_P .
+
+    $default  reduce usando la regla 15 (MKDISK_L)
+
+
+Estado 28
+
+   16 MKDISK_P: SIZE .
+
+    $default  reduce usando la regla 16 (MKDISK_P)
+
+
+Estado 29
+
+   17 MKDISK_P: FIT .
+
+    $default  reduce usando la regla 17 (MKDISK_P)
+
+
+Estado 30
+
+   18 MKDISK_P: UNIT .
+
+    $default  reduce usando la regla 18 (MKDISK_P)
+
+
+Estado 31
+
+   19 MKDISK_P: PATH .
+
+    $default  reduce usando la regla 19 (MKDISK_P)
+
+
+Estado 32
+
+   20 RMDISK: rmdisk_tk RMDISK_L .
+   21 RMDISK_L: RMDISK_L . RMDISK_P
+
+    path_tk  desplazar e ir al estado 25
+
+    $default  reduce usando la regla 20 (RMDISK)
+
+    RMDISK_P  ir al estado 76
+    PATH      ir al estado 34
+
+
+Estado 33
+
+   22 RMDISK_L: RMDISK_P .
+
+    $default  reduce usando la regla 22 (RMDISK_L)
+
+
+Estado 34
+
+   23 RMDISK_P: PATH .
+
+    $default  reduce usando la regla 23 (RMDISK_P)
+
+
+Estado 35
+
+   63 TYPE: type_tk . igual_tk id_tk
+
+    igual_tk  desplazar e ir al estado 77
+
+
+Estado 36
+
+   64 DELETE: delete_tk . igual_tk id_tk
+
+    igual_tk  desplazar e ir al estado 78
+
+
 Estado 37
 
-   23 FDISK: fdisk_tk FDISK_L .
-   24 FDISK_L: FDISK_L . FDISK_P
+   65 NAME: name_tk . igual_tk id_tk
+   66     | name_tk . igual_tk cad_tk
 
-    size_tk    desplazar e ir al estado 20
-    fit_tk     desplazar e ir al estado 21
-    unit_tk    desplazar e ir al estado 22
-    path_tk    desplazar e ir al estado 23
-    type_tk    desplazar e ir al estado 33
-    delete_tk  desplazar e ir al estado 34
-    name_tk    desplazar e ir al estado 35
-    add_tk     desplazar e ir al estado 36
-
-    $default  reduce usando la regla 23 (FDISK)
-
-    FDISK_P  ir al estado 75
-    SIZE     ir al estado 39
-    FIT      ir al estado 40
-    UNIT     ir al estado 41
-    PATH     ir al estado 42
-    TYPE     ir al estado 43
-    DELETE   ir al estado 44
-    NAME     ir al estado 45
-    ADD      ir al estado 46
+    igual_tk  desplazar e ir al estado 79
 
 
 Estado 38
 
-   25 FDISK_L: FDISK_P .
+   67 ADD: add_tk . igual_tk num_tk
+   68    | add_tk . igual_tk nun_tk
 
-    $default  reduce usando la regla 25 (FDISK_L)
+    igual_tk  desplazar e ir al estado 80
 
 
 Estado 39
 
-   26 FDISK_P: SIZE .
+   24 FDISK: fdisk_tk FDISK_L .
+   25 FDISK_L: FDISK_L . FDISK_P
 
-    $default  reduce usando la regla 26 (FDISK_P)
+    size_tk    desplazar e ir al estado 22
+    fit_tk     desplazar e ir al estado 23
+    unit_tk    desplazar e ir al estado 24
+    path_tk    desplazar e ir al estado 25
+    type_tk    desplazar e ir al estado 35
+    delete_tk  desplazar e ir al estado 36
+    name_tk    desplazar e ir al estado 37
+    add_tk     desplazar e ir al estado 38
+
+    $default  reduce usando la regla 24 (FDISK)
+
+    FDISK_P  ir al estado 81
+    SIZE     ir al estado 41
+    FIT      ir al estado 42
+    UNIT     ir al estado 43
+    PATH     ir al estado 44
+    TYPE     ir al estado 45
+    DELETE   ir al estado 46
+    NAME     ir al estado 47
+    ADD      ir al estado 48
 
 
 Estado 40
 
-   30 FDISK_P: FIT .
+   26 FDISK_L: FDISK_P .
 
-    $default  reduce usando la regla 30 (FDISK_P)
+    $default  reduce usando la regla 26 (FDISK_L)
 
 
 Estado 41
 
-   27 FDISK_P: UNIT .
+   27 FDISK_P: SIZE .
 
     $default  reduce usando la regla 27 (FDISK_P)
 
 
 Estado 42
 
-   28 FDISK_P: PATH .
-
-    $default  reduce usando la regla 28 (FDISK_P)
-
-
-Estado 43
-
-   29 FDISK_P: TYPE .
-
-    $default  reduce usando la regla 29 (FDISK_P)
-
-
-Estado 44
-
-   31 FDISK_P: DELETE .
+   31 FDISK_P: FIT .
 
     $default  reduce usando la regla 31 (FDISK_P)
 
 
+Estado 43
+
+   28 FDISK_P: UNIT .
+
+    $default  reduce usando la regla 28 (FDISK_P)
+
+
+Estado 44
+
+   29 FDISK_P: PATH .
+
+    $default  reduce usando la regla 29 (FDISK_P)
+
+
 Estado 45
 
-   32 FDISK_P: NAME .
+   30 FDISK_P: TYPE .
 
-    $default  reduce usando la regla 32 (FDISK_P)
+    $default  reduce usando la regla 30 (FDISK_P)
 
 
 Estado 46
 
-   33 FDISK_P: ADD .
+   32 FDISK_P: DELETE .
 
-    $default  reduce usando la regla 33 (FDISK_P)
+    $default  reduce usando la regla 32 (FDISK_P)
 
 
 Estado 47
 
-   34 MOUNT: mount_tk MOUNT_L .
-   35 MOUNT_L: MOUNT_L . MOUNT_P
+   33 FDISK_P: NAME .
 
-    path_tk  desplazar e ir al estado 23
-    name_tk  desplazar e ir al estado 35
-
-    $default  reduce usando la regla 34 (MOUNT)
-
-    MOUNT_P  ir al estado 76
-    PATH     ir al estado 49
-    NAME     ir al estado 50
+    $default  reduce usando la regla 33 (FDISK_P)
 
 
 Estado 48
 
-   36 MOUNT_L: MOUNT_P .
+   34 FDISK_P: ADD .
 
-    $default  reduce usando la regla 36 (MOUNT_L)
+    $default  reduce usando la regla 34 (FDISK_P)
 
 
 Estado 49
 
-   37 MOUNT_P: PATH .
+   35 MOUNT: mount_tk MOUNT_L .
+   36 MOUNT_L: MOUNT_L . MOUNT_P
 
-    $default  reduce usando la regla 37 (MOUNT_P)
+    path_tk  desplazar e ir al estado 25
+    name_tk  desplazar e ir al estado 37
+
+    $default  reduce usando la regla 35 (MOUNT)
+
+    MOUNT_P  ir al estado 82
+    PATH     ir al estado 51
+    NAME     ir al estado 52
 
 
 Estado 50
 
-   38 MOUNT_P: NAME .
+   37 MOUNT_L: MOUNT_P .
 
-    $default  reduce usando la regla 38 (MOUNT_P)
+    $default  reduce usando la regla 37 (MOUNT_L)
 
 
 Estado 51
 
-   63 ID: idk_tk . igual_tk id_tk
+   38 MOUNT_P: PATH .
 
-    igual_tk  desplazar e ir al estado 77
+    $default  reduce usando la regla 38 (MOUNT_P)
 
 
 Estado 52
 
-   39 UNMOUNT: unmount_tk UNMOUNT_L .
-   40 UNMOUNT_L: UNMOUNT_L . UNMOUNT_P
+   39 MOUNT_P: NAME .
 
-    idk_tk  desplazar e ir al estado 51
-
-    $default  reduce usando la regla 39 (UNMOUNT)
-
-    UNMOUNT_P  ir al estado 78
-    ID         ir al estado 54
+    $default  reduce usando la regla 39 (MOUNT_P)
 
 
 Estado 53
 
-   41 UNMOUNT_L: UNMOUNT_P .
+   69 ID: idk_tk . igual_tk id_tk
 
-    $default  reduce usando la regla 41 (UNMOUNT_L)
+    igual_tk  desplazar e ir al estado 83
 
 
 Estado 54
 
-   42 UNMOUNT_P: ID .
+   40 UNMOUNT: unmount_tk UNMOUNT_L .
+   41 UNMOUNT_L: UNMOUNT_L . UNMOUNT_P
 
-    $default  reduce usando la regla 42 (UNMOUNT_P)
+    idk_tk  desplazar e ir al estado 53
+
+    $default  reduce usando la regla 40 (UNMOUNT)
+
+    UNMOUNT_P  ir al estado 84
+    ID         ir al estado 56
 
 
 Estado 55
 
-   49 EXEC: exec_tk EXEC_L .
-   50 EXEC_L: EXEC_L . EXEC_P
+   42 UNMOUNT_L: UNMOUNT_P .
 
-    path_tk  desplazar e ir al estado 23
-
-    $default  reduce usando la regla 49 (EXEC)
-
-    EXEC_P  ir al estado 79
-    PATH    ir al estado 57
+    $default  reduce usando la regla 42 (UNMOUNT_L)
 
 
 Estado 56
 
-   51 EXEC_L: EXEC_P .
+   43 UNMOUNT_P: ID .
 
-    $default  reduce usando la regla 51 (EXEC_L)
+    $default  reduce usando la regla 43 (UNMOUNT_P)
 
 
 Estado 57
 
-   52 EXEC_P: PATH .
+   50 EXEC: exec_tk EXEC_L .
+   51 EXEC_L: EXEC_L . EXEC_P
 
-    $default  reduce usando la regla 52 (EXEC_P)
+    path_tk  desplazar e ir al estado 25
+
+    $default  reduce usando la regla 50 (EXEC)
+
+    EXEC_P  ir al estado 85
+    PATH    ir al estado 59
 
 
 Estado 58
 
-   43 REP: rep_tk REP_L .
-   44 REP_L: REP_L . REP_P
+   52 EXEC_L: EXEC_P .
 
-    path_tk  desplazar e ir al estado 23
-    name_tk  desplazar e ir al estado 35
-    idk_tk   desplazar e ir al estado 51
-
-    $default  reduce usando la regla 43 (REP)
-
-    REP_P  ir al estado 80
-    PATH   ir al estado 60
-    NAME   ir al estado 61
-    ID     ir al estado 62
+    $default  reduce usando la regla 52 (EXEC_L)
 
 
 Estado 59
 
-   45 REP_L: REP_P .
+   53 EXEC_P: PATH .
 
-    $default  reduce usando la regla 45 (REP_L)
+    $default  reduce usando la regla 53 (EXEC_P)
 
 
 Estado 60
 
-   46 REP_P: PATH .
+   44 REP: rep_tk REP_L .
+   45 REP_L: REP_L . REP_P
 
-    $default  reduce usando la regla 46 (REP_P)
+    path_tk  desplazar e ir al estado 25
+    name_tk  desplazar e ir al estado 37
+    idk_tk   desplazar e ir al estado 53
+
+    $default  reduce usando la regla 44 (REP)
+
+    REP_P  ir al estado 86
+    PATH   ir al estado 62
+    NAME   ir al estado 63
+    ID     ir al estado 64
 
 
 Estado 61
 
-   47 REP_P: NAME .
+   46 REP_L: REP_P .
 
-    $default  reduce usando la regla 47 (REP_P)
+    $default  reduce usando la regla 46 (REP_L)
 
 
 Estado 62
 
-   48 REP_P: ID .
+   47 REP_P: PATH .
+
+    $default  reduce usando la regla 47 (REP_P)
+
+
+Estado 63
+
+   48 REP_P: NAME .
 
     $default  reduce usando la regla 48 (REP_P)
 
 
-Estado 63
+Estado 64
+
+   49 REP_P: ID .
+
+    $default  reduce usando la regla 49 (REP_P)
+
+
+Estado 65
+
+   54 MKFS: mkfs_tk MKFS_L .
+   55 MKFS_L: MKFS_L . MKFS_P
+
+    type_tk  desplazar e ir al estado 35
+    idk_tk   desplazar e ir al estado 53
+
+    $default  reduce usando la regla 54 (MKFS)
+
+    MKFS_P  ir al estado 87
+    TYPE    ir al estado 67
+    ID      ir al estado 68
+
+
+Estado 66
+
+   56 MKFS_L: MKFS_P .
+
+    $default  reduce usando la regla 56 (MKFS_L)
+
+
+Estado 67
+
+   58 MKFS_P: TYPE .
+
+    $default  reduce usando la regla 58 (MKFS_P)
+
+
+Estado 68
+
+   57 MKFS_P: ID .
+
+    $default  reduce usando la regla 57 (MKFS_P)
+
+
+Estado 69
 
     0 $accept: INICIO $end .
 
     $default  aceptar
 
 
-Estado 64
+Estado 70
 
     2 LISTA: LISTA TIPOS .
 
     $default  reduce usando la regla 2 (LISTA)
 
 
-Estado 65
-
-   53 SIZE: size_tk igual_tk . num_tk
-
-    num_tk  desplazar e ir al estado 81
-
-
-Estado 66
-
-   54 FIT: fit_tk igual_tk . id_tk
-
-    id_tk  desplazar e ir al estado 82
-
-
-Estado 67
-
-   55 UNIT: unit_tk igual_tk . id_tk
-
-    id_tk  desplazar e ir al estado 83
-
-
-Estado 68
-
-   56 PATH: path_tk igual_tk . rut_tk
-
-    rut_tk  desplazar e ir al estado 84
-
-
-Estado 69
-
-   13 MKDISK_L: MKDISK_L MKDISK_P .
-
-    $default  reduce usando la regla 13 (MKDISK_L)
-
-
-Estado 70
-
-   20 RMDISK_L: RMDISK_L RMDISK_P .
-
-    $default  reduce usando la regla 20 (RMDISK_L)
-
-
 Estado 71
 
-   57 TYPE: type_tk igual_tk . id_tk
+   59 SIZE: size_tk igual_tk . num_tk
 
-    id_tk  desplazar e ir al estado 85
+    num_tk  desplazar e ir al estado 88
 
 
 Estado 72
 
-   58 DELETE: delete_tk igual_tk . id_tk
+   60 FIT: fit_tk igual_tk . id_tk
 
-    id_tk  desplazar e ir al estado 86
+    id_tk  desplazar e ir al estado 89
 
 
 Estado 73
 
-   59 NAME: name_tk igual_tk . id_tk
-   60     | name_tk igual_tk . cad_tk
+   61 UNIT: unit_tk igual_tk . id_tk
 
-    id_tk   desplazar e ir al estado 87
-    cad_tk  desplazar e ir al estado 88
+    id_tk  desplazar e ir al estado 90
 
 
 Estado 74
 
-   61 ADD: add_tk igual_tk . num_tk
-   62    | add_tk igual_tk . nun_tk
+   62 PATH: path_tk igual_tk . rut_tk
 
-    num_tk  desplazar e ir al estado 89
-    nun_tk  desplazar e ir al estado 90
+    rut_tk  desplazar e ir al estado 91
 
 
 Estado 75
 
-   24 FDISK_L: FDISK_L FDISK_P .
+   14 MKDISK_L: MKDISK_L MKDISK_P .
 
-    $default  reduce usando la regla 24 (FDISK_L)
+    $default  reduce usando la regla 14 (MKDISK_L)
 
 
 Estado 76
 
-   35 MOUNT_L: MOUNT_L MOUNT_P .
+   21 RMDISK_L: RMDISK_L RMDISK_P .
 
-    $default  reduce usando la regla 35 (MOUNT_L)
+    $default  reduce usando la regla 21 (RMDISK_L)
 
 
 Estado 77
 
-   63 ID: idk_tk igual_tk . id_tk
+   63 TYPE: type_tk igual_tk . id_tk
 
-    id_tk  desplazar e ir al estado 91
+    id_tk  desplazar e ir al estado 92
 
 
 Estado 78
 
-   40 UNMOUNT_L: UNMOUNT_L UNMOUNT_P .
+   64 DELETE: delete_tk igual_tk . id_tk
 
-    $default  reduce usando la regla 40 (UNMOUNT_L)
+    id_tk  desplazar e ir al estado 93
 
 
 Estado 79
 
-   50 EXEC_L: EXEC_L EXEC_P .
+   65 NAME: name_tk igual_tk . id_tk
+   66     | name_tk igual_tk . cad_tk
 
-    $default  reduce usando la regla 50 (EXEC_L)
+    id_tk   desplazar e ir al estado 94
+    cad_tk  desplazar e ir al estado 95
 
 
 Estado 80
 
-   44 REP_L: REP_L REP_P .
+   67 ADD: add_tk igual_tk . num_tk
+   68    | add_tk igual_tk . nun_tk
 
-    $default  reduce usando la regla 44 (REP_L)
+    num_tk  desplazar e ir al estado 96
+    nun_tk  desplazar e ir al estado 97
 
 
 Estado 81
 
-   53 SIZE: size_tk igual_tk num_tk .
+   25 FDISK_L: FDISK_L FDISK_P .
 
-    $default  reduce usando la regla 53 (SIZE)
+    $default  reduce usando la regla 25 (FDISK_L)
 
 
 Estado 82
 
-   54 FIT: fit_tk igual_tk id_tk .
+   36 MOUNT_L: MOUNT_L MOUNT_P .
 
-    $default  reduce usando la regla 54 (FIT)
+    $default  reduce usando la regla 36 (MOUNT_L)
 
 
 Estado 83
 
-   55 UNIT: unit_tk igual_tk id_tk .
+   69 ID: idk_tk igual_tk . id_tk
 
-    $default  reduce usando la regla 55 (UNIT)
+    id_tk  desplazar e ir al estado 98
 
 
 Estado 84
 
-   56 PATH: path_tk igual_tk rut_tk .
+   41 UNMOUNT_L: UNMOUNT_L UNMOUNT_P .
 
-    $default  reduce usando la regla 56 (PATH)
+    $default  reduce usando la regla 41 (UNMOUNT_L)
 
 
 Estado 85
 
-   57 TYPE: type_tk igual_tk id_tk .
+   51 EXEC_L: EXEC_L EXEC_P .
 
-    $default  reduce usando la regla 57 (TYPE)
+    $default  reduce usando la regla 51 (EXEC_L)
 
 
 Estado 86
 
-   58 DELETE: delete_tk igual_tk id_tk .
+   45 REP_L: REP_L REP_P .
 
-    $default  reduce usando la regla 58 (DELETE)
+    $default  reduce usando la regla 45 (REP_L)
 
 
 Estado 87
 
-   59 NAME: name_tk igual_tk id_tk .
+   55 MKFS_L: MKFS_L MKFS_P .
 
-    $default  reduce usando la regla 59 (NAME)
+    $default  reduce usando la regla 55 (MKFS_L)
 
 
 Estado 88
 
-   60 NAME: name_tk igual_tk cad_tk .
+   59 SIZE: size_tk igual_tk num_tk .
 
-    $default  reduce usando la regla 60 (NAME)
+    $default  reduce usando la regla 59 (SIZE)
 
 
 Estado 89
 
-   61 ADD: add_tk igual_tk num_tk .
+   60 FIT: fit_tk igual_tk id_tk .
 
-    $default  reduce usando la regla 61 (ADD)
+    $default  reduce usando la regla 60 (FIT)
 
 
 Estado 90
 
-   62 ADD: add_tk igual_tk nun_tk .
+   61 UNIT: unit_tk igual_tk id_tk .
 
-    $default  reduce usando la regla 62 (ADD)
+    $default  reduce usando la regla 61 (UNIT)
 
 
 Estado 91
 
-   63 ID: idk_tk igual_tk id_tk .
+   62 PATH: path_tk igual_tk rut_tk .
 
-    $default  reduce usando la regla 63 (ID)
+    $default  reduce usando la regla 62 (PATH)
+
+
+Estado 92
+
+   63 TYPE: type_tk igual_tk id_tk .
+
+    $default  reduce usando la regla 63 (TYPE)
+
+
+Estado 93
+
+   64 DELETE: delete_tk igual_tk id_tk .
+
+    $default  reduce usando la regla 64 (DELETE)
+
+
+Estado 94
+
+   65 NAME: name_tk igual_tk id_tk .
+
+    $default  reduce usando la regla 65 (NAME)
+
+
+Estado 95
+
+   66 NAME: name_tk igual_tk cad_tk .
+
+    $default  reduce usando la regla 66 (NAME)
+
+
+Estado 96
+
+   67 ADD: add_tk igual_tk num_tk .
+
+    $default  reduce usando la regla 67 (ADD)
+
+
+Estado 97
+
+   68 ADD: add_tk igual_tk nun_tk .
+
+    $default  reduce usando la regla 68 (ADD)
+
+
+Estado 98
+
+   69 ID: idk_tk igual_tk id_tk .
+
+    $default  reduce usando la regla 69 (ID)
